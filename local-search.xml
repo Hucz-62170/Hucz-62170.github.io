@@ -17,48 +17,23 @@
   
   
   <entry>
-    <title>一篇测试文档</title>
-    <link href="/2026/03/23/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%B5%8B%E8%AF%95%E6%96%87%E6%A1%A3/"/>
-    <url>/2026/03/23/%E7%AC%AC%E4%B8%80%E7%AF%87%E6%B5%8B%E8%AF%95%E6%96%87%E6%A1%A3/</url>
-    
-    <content type="html"><![CDATA[<p>这是一篇测试文档。</p>]]></content>
-    
-    
-    <categories>
-      
-      <category>测试</category>
-      
-    </categories>
-    
-    
-    <tags>
-      
-      <tag>测试</tag>
-      
-    </tags>
-    
-  </entry>
-  
-  
-  
-  <entry>
-    <title>一篇测试文档</title>
+    <title>标准测试文档</title>
     <link href="/2026/03/23/Test/"/>
     <url>/2026/03/23/Test/</url>
     
-    <content type="html"><![CDATA[<p>这是一篇测试文档。</p>]]></content>
+    <content type="html"><![CDATA[<p>这是一篇测试文档，这篇文章包含了所有可能显示的信息。<br>其中，title为文章标题，date为创建日期，updated为文章更新日期。</p>]]></content>
     
     
     <categories>
       
-      <category>暂无</category>
+      <category>分类</category>
       
     </categories>
     
     
     <tags>
       
-      <tag>暂无</tag>
+      <tag>标签</tag>
       
     </tags>
     
