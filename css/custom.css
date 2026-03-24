@@ -99,3 +99,24 @@ article p {
   /* 初始状态设为透明，防止页面加载瞬间闪烁 */
   opacity: 0;
 }
+
+/* 1. 定义初始状态：防止图片溢出容器 */
+.index-card .index-img img {
+  /* 增加过渡动画，135 是平滑度，你可以根据手感调成 0.5s */
+  transition: transform 0.6s ease-out;
+  /* 确保缩放时不会出现锯齿 */
+  will-change: transform;
+}
+
+/* 2. 定义鼠标悬停（Hover）状态 */
+.index-card:hover .index-img img {
+  /* 1.05 代表放大到 1.05 倍，即轻微放大 5% */
+  /* 如果想要更明显一点，可以调成 1.1 */
+  transform: scale(1.05);
+}
+
+/* 3. 修正：确保放大后的图片不会撑开卡片边缘 */
+.index-img {
+  overflow: hidden;
+  /* 这一行保证了图片放大时会被“框”在卡片里，形成一种往里钻的视觉感 */
+}
