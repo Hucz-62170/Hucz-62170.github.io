@@ -53,3 +53,49 @@ article p {
 .full-bg-img, .mask {
   z-index: -1 !important;
 }
+
+/* 聚合所有需要变色的标题类名 */
+#subtitle,              /* 首页副标题（你提到的那段话） */
+.post-content h1,       /* 文章详情页的正文大标题 */
+.post-content h2,       /* 文章内的二级标题（可选） */
+.header-section h1,     /* 归档、分类、标签页的顶部大标题 */
+.category-title,        /* 分类页的具体名称 */
+.about-avatar + h1      /* 关于我页面的名字 */ {
+  /* 文字主色：保持你喜欢的浅青色或纯白 */
+  color: #ffffff !important; 
+  
+  /* 映射 PS 参数：
+     水平位移 0 (因为角度是 90度，只有垂直位移)
+     垂直位移 3px (对应 PS 的距离)
+     模糊半径 10px (对应 PS 的大小)
+     颜色选用纯黑或深色，100% 不透明度
+  */
+  text-shadow: 0px 3px 10px rgba(0, 0, 0, 1);
+
+  /* 如果觉得 20% 的扩展不够扎实，可以叠一层 drop-shadow 滤镜 */
+  /* 这会让投影看起来更“浓郁”，更像 PS 里的混合模式效果 */
+  filter: drop-shadow(0px 3px 2px rgba(0, 0, 0, 0.5));
+
+  font-weight: bold;
+}
+
+/* 定义：从透明到不透明，并向上轻微漂移 */
+@keyframes avatar-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px); /* 初始位置下移 20px */
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);    /* 回到原位 */
+  }
+}
+
+/* 这是一个专门给头像用的动画类 */
+.avatar-animate {
+  /* 这里的 1.5s 是动画时长，可以根据你的喜好调快或调慢 */
+  animation: avatar-fade-in 1.5s ease-out forwards;
+  
+  /* 初始状态设为透明，防止页面加载瞬间闪烁 */
+  opacity: 0;
+}
