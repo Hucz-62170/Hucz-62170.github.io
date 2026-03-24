@@ -111,12 +111,6 @@ article p {
   box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-.index-info .index-header:hover {
-  color: #a8edea !important; /* 换成你标题那种淡青色 */
-  padding-left: 5px;         /* 往右微挪一点，很有灵动感 */
-  transition: all 0.3s ease;
-}
-
 /* 1. 清除容器限制，恢复自然布局 */
 .archive-list-container,
 .list-group {
@@ -187,10 +181,6 @@ article p {
   transform: translateX(10px);
 }
 
-.archive-item:hover .post-title {
-  color: #42a5f5 !important;
-}
-
 /* 1. 基础条目设置 */
 .archive-item {
   display: flex !important;
@@ -212,11 +202,6 @@ article p {
 .archive-item:hover {
   /* 向右平移 15px */
   transform: translateX(15px) !important;
-}
-
-/* 3. 文字变色同步动画 */
-.archive-item:hover .post-title {
-  color: #42a5f5 !important;
 }
 
 /* 4. 如果你想让图片也跟着有个小反馈 */
