@@ -100,23 +100,146 @@ article p {
   opacity: 0;
 }
 
-/* 1. 定义初始状态：防止图片溢出容器 */
-.index-card .index-img img {
-  /* 增加过渡动画，135 是平滑度，你可以根据手感调成 0.5s */
-  transition: transform 0.6s ease-out;
-  /* 确保缩放时不会出现锯齿 */
-  will-change: transform;
+.index-card {
+  /* 初始过渡 */
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 }
 
-/* 2. 定义鼠标悬停（Hover）状态 */
-.index-card:hover .index-img img {
-  /* 1.05 代表放大到 1.05 倍，即轻微放大 5% */
-  /* 如果想要更明显一点，可以调成 1.1 */
-  transform: scale(1.05);
+.index-card:hover {
+  /* 向上位移 5px，并加深投影 */
+  transform: translateY(-5px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.2);
 }
 
-/* 3. 修正：确保放大后的图片不会撑开卡片边缘 */
-.index-img {
+.index-info .index-header:hover {
+  color: #a8edea !important; /* 换成你标题那种淡青色 */
+  padding-left: 5px;         /* 往右微挪一点，很有灵动感 */
+  transition: all 0.3s ease;
+}
+
+/* 1. 清除容器限制，恢复自然布局 */
+.archive-list-container,
+.list-group {
+  background: transparent !important;
+  border: none !important;
+  margin-left: 0 !important;
+  padding: 0 !important;
+}
+
+/* 2. 让“共计”和“年份”左对齐 */
+.archive-list-title,
+.archive-year-wrap {
+  padding-left: 10px !important; /* 给边缘留一点点呼吸空间 */
+  margin-bottom: 5px !important;
+  display: block;
+}
+
+.archive-list-title {
+  color: #666 !important;
+  font-size: 1.1rem;
+}
+
+.archive-year {
+  font-size: 1.4rem !important;
+  font-weight: 800 !important;
+  color: #333 !important;
+  letter-spacing: 1px;
+  font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+}
+
+/* 3. 文章条目：向右平移，形成层级感 */
+.archive-item {
+  display: flex !important;
+  align-items: center;
+  /* 调整这个值来控制文章相对于年份向右缩进的距离 */
+  padding: 15px 0 15px 40px !important; 
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+}
+
+/* 去掉所有圆点伪元素 */
+.archive-list-title::before,
+.archive-year-wrap::before,
+.archive-item::before,
+.archive-item::after {
+  content: none !important;
+}
+
+/* 4. 缩略图保持规范 */
+.archive-pic {
+  width: 80px;
+  height: 80px;
+  margin-right: 20px;
+  flex-shrink: 0;
   overflow: hidden;
-  /* 这一行保证了图片放大时会被“框”在卡片里，形成一种往里钻的视觉感 */
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
 }
+
+.archive-pic img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover !important;
+}
+
+/* 5. 悬停效果：轻微向右浮动 */
+.archive-item:hover {
+  transform: translateX(10px);
+}
+
+.archive-item:hover .post-title {
+  color: #42a5f5 !important;
+}
+
+/* 1. 基础条目设置 */
+.archive-item {
+  display: flex !important;
+  align-items: center;
+  padding: 15px 0 15px 40px !important; 
+  text-decoration: none !important;
+  background: transparent !important;
+  
+  /* 核心：添加过渡动画 */
+  /* transform 代表位移，color 代表文字变色，0.3s 是速度，ease-out 是先快后慢 */
+  transition: transform 0.3s ease-out, color 0.3s ease-out !important;
+  
+  /* 必须设置初始位移，否则浏览器可能不知道从哪开始动 */
+  transform: translateX(0); 
+  will-change: transform; /* 告诉浏览器这个元素要动，提前分配显卡资源 */
+}
+
+/* 2. 悬停触发位移 */
+.archive-item:hover {
+  /* 向右平移 15px */
+  transform: translateX(15px) !important;
+}
+
+/* 3. 文字变色同步动画 */
+.archive-item:hover .post-title {
+  color: #42a5f5 !important;
+}
+
+/* 4. 如果你想让图片也跟着有个小反馈 */
+.archive-pic {
+  transition: transform 0.3s ease-out !important;
+}
+.archive-item:hover .archive-pic {
+  transform: scale(1.05); /* 图片微微放大 */
+}
+
+/* 1. 放大并加粗“共计 X 篇文章” */
+.archive-list-title {
+  /* 调整这个值来改变大小，1.4rem 左右会比现在的文字明显大一圈 */
+  font-size: 1.4rem !important; 
+  /* 700 或 800 代表加粗 */
+  font-weight: 700 !important;
+  color: #333 !important;
+  /* 增加一些下边距，让它和下面的年份排开 */
+  margin-bottom: 30px !important;
+  /* 确保和年份左对齐 */
+  padding-left: 10px !important; 
+  display: block;
+}
+
+/* 2. 可选：给数字加个主题色高亮，更有视觉中心感 */
+/* 如果你想让里面的数字颜色不一样，可以在 ejs 里给数字套个 span，或者直接整体调色 */
