@@ -293,9 +293,12 @@
      style="background: url('/img/Bg.png') no-repeat center center; background-size: cover;">
   <div class="full-bg-img">
     <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
+  
+  <canvas id="snow-canvas" style="position:absolute; top:0; left:0; width:100%; height:100%; z-index: 1; pointer-events:none;"></canvas>
+
+  <div class="banner-text text-center fade-in-up" style="position: relative; z-index: 2;">
+    <div class="h2">
+      
           
             <span id="subtitle">标签</span>
           
@@ -315,6 +318,85 @@
 
 
 
+<script>
+  (function() {
+    const canvas = document.getElementById('snow-canvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    let width, height, flakes = [];
+
+    // 状态锁，防止 resize 过程中频繁重复 init 导致闪烁
+    let isInitializing = false;
+
+    function init() {
+      if (isInitializing) return;
+      isInitializing = true;
+
+      const rect = canvas.getBoundingClientRect();
+      width = canvas.width = rect.width;
+      height = canvas.height = rect.height;
+      
+      flakes = [];
+      for (let i = 0; i < 80; i++) { // 稍微减少数量，提高性能
+        flakes.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          r: Math.random() * 2.5 + 0.5, // 雪花小一点更精致
+          d: Math.random() * 0.5 + 0.2   // 随机下落系数
+        });
+      }
+      isInitializing = false;
+    }
+
+    function draw() {
+      // 核心：先清除，后立即绘制，减少空白帧时间
+      ctx.clearRect(0, 0, width, height);
+      ctx.fillStyle = "rgba(255, 255, 255, 0.5)";
+      ctx.beginPath();
+      for (let f of flakes) {
+        ctx.moveTo(f.x, f.y);
+        ctx.arc(f.x, f.y, f.r, 0, Math.PI * 2, true);
+      }
+      ctx.fill();
+      
+      // 移动逻辑
+      for (let f of flakes) {
+        f.y += f.d + 0.3; // 控制下落速度
+        f.x += Math.sin(f.y / 50) * 0.5; // 控制摆动幅度
+        if (f.y > height) {
+          f.y = -5;
+          f.x = Math.random() * width;
+        }
+      }
+    }
+
+    // 限制帧率逻辑
+    let fpsInterval = 1000 / 60; // 强制 60 帧
+    let then = Date.now();
+
+    function animate() {
+      requestAnimationFrame(animate);
+      let now = Date.now();
+      let elapsed = now - then;
+
+      if (elapsed > fpsInterval) {
+        then = now - (elapsed % fpsInterval);
+        draw();
+      }
+    }
+
+    // 监听窗口缩放，加个防抖处理
+    let resizeTimer;
+    window.addEventListener('resize', function() {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(init, 200);
+    });
+
+    // 启动
+    init();
+    animate();
+  })();
+</script>
 </div>
 
   </header>
@@ -433,5 +515,6 @@
   <noscript>
     <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
   </noscript>
+
 </body>
 </html>

@@ -32,3 +32,24 @@ article p {
   /* 也可以取消段落顶部的间距，防止重复计算 */
   margin-top: 0 !important;
 }
+
+/* 1. 确保 Banner 的文字内容和头像容器在最顶层 */
+.banner-text, 
+.index-avatar {
+  position: relative !important;
+  z-index: 10 !important; /* 这个值只要比雪花的 z-index 大就行 */
+}
+
+/* 2. 重点排查：如果雪花还是在上面，说明是雪花层级设太高了 */
+#snow-canvas {
+  z-index: 0 !important; /* 将雪花降到底部，让它紧贴背景图 */
+  pointer-events: none;
+}
+
+/* 3. 如果背景图盖住了雪花，我们要让 Banner 的背景稍微退后 */
+#banner {
+  z-index: -2 !important;
+}
+.full-bg-img, .mask {
+  z-index: -1 !important;
+}
