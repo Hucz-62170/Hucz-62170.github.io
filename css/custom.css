@@ -225,6 +225,3 @@ article p {
   padding-left: 10px !important; 
   display: block;
 }
-
-/* 2. 可选：给数字加个主题色高亮，更有视觉中心感 */
-/* 如果你想让里面的数字颜色不一样，可以在 ejs 里给数字套个 span，或者直接整体调色 */
