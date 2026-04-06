@@ -17,25 +17,25 @@
   
   <meta name="theme-color" content="#2f4154">
   <meta name="author" content="辉川">
-  <meta name="keywords" content="工程实践,C#,AOP,面向切面编程">
+  <meta name="keywords" content="工程实践,C#,开发">
   
-    <meta name="description" content="一个AOP的实现原型。">
+    <meta name="description" content="最近的心得总结。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="基于委托的C#面向切面编程">
-<meta property="og:url" content="http://hucz-62170.github.io/2026/03/26/Practice001/index.html">
+<meta property="og:title" content="一周心得（一）">
+<meta property="og:url" content="http://hucz-62170.github.io/2026/04/06/Tittle-talle001/index.html">
 <meta property="og:site_name" content="川行录">
-<meta property="og:description" content="一个AOP的实现原型。">
+<meta property="og:description" content="最近的心得总结。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://hucz-62170.github.io/img/Practice001.jpg">
-<meta property="article:published_time" content="2026-03-26T08:45:00.000Z">
-<meta property="article:modified_time" content="2026-03-26T09:47:50.711Z">
+<meta property="og:image" content="http://hucz-62170.github.io/img/Tittle-tattle001.jpg">
+<meta property="article:published_time" content="2026-04-06T14:55:00.000Z">
+<meta property="article:modified_time" content="2026-04-06T15:51:04.126Z">
 <meta property="article:author" content="辉川">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://hucz-62170.github.io/img/Practice001.jpg">
+<meta name="twitter:image" content="http://hucz-62170.github.io/img/Tittle-tattle001.jpg">
   
   
   
-  <title>基于委托的C#面向切面编程 - 川行录</title>
+  <title>一周心得（一） - 川行录</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -295,7 +295,7 @@
     <div class="h2">
       
           
-            <span id="subtitle">基于委托的C#面向切面编程</span>
+            <span id="subtitle">一周心得（一）</span>
           
         </div>
 
@@ -306,8 +306,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-03-26 16:45" pubdate>
-          2026年3月26日 下午
+        <time datetime="2026-04-06 22:55" pubdate>
+          2026年4月6日 晚上
         </time>
       </span>
     
@@ -318,7 +318,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          全文 1.5k 字
+          全文 2.3k 字
         
       </span>
     
@@ -329,7 +329,7 @@
         
         
         
-          预计阅读时间 13 分钟
+          预计阅读时间 19 分钟
         
       </span>
     
@@ -447,12 +447,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">基于委托的C#面向切面编程</h1>
+            <h1 id="seo-header">一周心得（一）</h1>
             
               <p id="updated-time" class="note note-info" style="display: none">
                 
                   
-                    本文最后更新于 2026-03-26T17:47:50+08:00
+                    本文最后更新于 2026-04-06T23:51:04+08:00
                   
                   
 
@@ -464,23 +464,26 @@
                 
                 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;Spring框架的核心之一是实现了<strong>面向切面编程</strong>(Aspect Oriented Programming, AOP)，与OO相比，这一范式分离了不同的业务逻辑，增加了代码的模块化程度和开发效率，而且也使方法本身更加符合SRP。<br>&emsp;&emsp;考虑一个场景：如果我们设计了一个包含若干种不同方法的类，我们规定其中的几种方法需要在被调用后做出一些相同的操作，按照传统的思路，我们会为这些方法的末尾加上相同的代码，但是这样就导致这些操作散落一地，每次修改都需要逐个更改这些方法本身。按照AOP的思想，我们可以将这些相同的操作集中到一处，从而使方法更专注于本身的业务逻辑。<br>&emsp;&emsp;本文将讨论使用C#的委托实现AOP的可能性，并给出一个朴素的原型。</p>
+<p>&emsp;&emsp;今年清明节的三天假期结束了，我一共抽了两天的时间进行开发。总的来说，这两天的心得还是比较多，所以写一篇文章记录一下。</p>
 </div>
 
-<h3 id="实现思路"><a href="#实现思路" class="headerlink" title="实现思路"></a>实现思路</h3><div style="text-align: justify;">
+<h3 id="更好的Boss招式设计"><a href="#更好的Boss招式设计" class="headerlink" title="更好的Boss招式设计"></a>更好的Boss招式设计</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;我们知道，在C#中，委托是对方法的封装。因此，如果我们调用委托时执行其他操作，就可以使AOP成为可能。<br>&emsp;&emsp;本文的实现思路是，首先定义<code>Advice</code>和<code>Pointcut</code>委托，前者用来封装公共代码，后者用来封装执行业务逻辑的方法（后文中称为<strong>切入点</strong>）。然后定义<code>Aspect</code>类，其中包含类型为<code>Advice</code>的<code>before</code>和<code>after</code>对象，以及类型为<code>Pointcut</code>的<code>p</code>对象。我们修改该类的构造函数，使得<code>Aspect</code>类在实例化时就将切入点传递给<code>p</code>。同时，我们定义<code>AddBefore()</code>和<code>AddAfter()</code>，每次接受一个类型为<code>Advice</code>的参数，将该参数利用多播委托传递给<code>before</code>和<code>after</code>。<br>&emsp;&emsp;接下来，我们需要定义对切入点的调用。这里为了简化，我们只规定切入点的函数在执行之前和执行之后都会执行一些代码，因此为<code>Aspect</code>定义<code>Invoke()</code>，然后按照顺序执行<code>before</code>、<code>p</code>和<code>after</code>。</p>
+<p>&emsp;&emsp;目前已经开发到第二个boss刘安。一直以来我对自己的东西都有一个疑惑：为什么我做出来的战斗不像是一场boss战？为什么很多地方给人的感觉和其他动作游戏非常不同？昨天在严肃学习九日（Nine Sols）时好像才发现了我在招式设计中的一个巨大问题：我把所有boss的每个招式都设计成了独立、割裂且互不关联的。以葛洪为例，一阶段他的招式有这些：A.召唤两个自机狙炼丹炉；B.召唤一排炼丹炉下砸；C.移动到屏幕中心召唤一圈炼丹炉，然后回到原位。出招逻辑方面，他的一次攻击包含两个招式，每一招从这三个中随机抽取一招。所以，这给人的观感就是：这些技能各玩各的。即使C有位移，也被我写的逻辑卡死在了最终的位置。<br>&emsp;&emsp;而回看九日中的boss，不难发现他们的共同点：<strong>他们的出招都有一个完整的体系</strong>。以姬为例，他的招式链十分明显：操控一发或两发剑进行攻击（这一招可能重复若干次） -&gt; 召唤黑洞&#x2F;浑天仪&#x2F;五发剑 -&gt; 操控一发或两发剑进行攻击 -&gt; 操控一发剑 -&gt; 可以被太极踢的红光攻击 -&gt; 结束。这是一套非常明确的攻击循环，不仅招式与招式之间有关联，而且这样做才能够控制变招，或者根据当前的情况来决定接下来的行为，也让玩家容易摸清boss的出招方式。<br>&emsp;&emsp;明白了这一点后，我把之前设计好的boss招式全部推翻重做了。最近让我一直发愁到底该怎么设计的刘安，也得到了解决方案。以下是我重构后的招式链：<br><img src="/img/LiuAn.png" srcset="/img/loading.gif" lazyload alt="刘安的招式链"><br>&emsp;&emsp;通过协程对招式的释放顺序进行控制，不仅做到了变招，也能做到真正意义上<strong>在和玩家战斗</strong>的boss。在未来对boss招式的设计中，也可以将这个攻击循环变为如boss调整位置 -&gt; 攻击前的小招 -&gt; 正式攻击 -&gt; 收尾等更加真实且富有特色的设计。</p>
 </div>
 
-<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><div style="text-align: justify;">
+<h3 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h3><div style="text-align: justify;">
 
-<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-built_in">delegate</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Advice</span>()</span>;<br><span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-built_in">delegate</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Pointcut</span>(<span class="hljs-params"><span class="hljs-built_in">int</span> x, <span class="hljs-built_in">int</span> y</span>)</span>;<br><br><span class="hljs-keyword">class</span> <span class="hljs-title">Aspect</span><br>&#123;<br>    <span class="hljs-keyword">static</span> Advice before = <span class="hljs-literal">null</span>;<br>    <span class="hljs-keyword">static</span> Advice after = <span class="hljs-literal">null</span>;<br>    Pointcut p = <span class="hljs-literal">null</span>;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-title">Aspect</span>(<span class="hljs-params">Pointcut p</span>)</span><br>    &#123;<br>        <span class="hljs-keyword">this</span>.p = p;<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">void</span> <span class="hljs-title">Invoke</span>(<span class="hljs-params"><span class="hljs-built_in">int</span> x, <span class="hljs-built_in">int</span> y</span>)</span><br>    &#123;<br>        before?.Invoke();<br>        p.Invoke(x, y);<br>        after?.Invoke();<br>    &#125;<br><br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">AddBefore</span>(<span class="hljs-params">Advice b</span>)</span><br>    &#123;<br>        before += b;<br>    &#125;<br>    <span class="hljs-function"><span class="hljs-keyword">public</span> <span class="hljs-keyword">static</span> <span class="hljs-keyword">void</span> <span class="hljs-title">AddAfter</span>(<span class="hljs-params">Advice a</span>)</span><br>    &#123;<br>        after += a;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
-<p>&emsp;&emsp;<strong>使用说明</strong>： 当我们每次需要调用方法时，只需要实例化一个<code>Aspect</code>类的对象，并将该方法作为参数传递，然后<code>Invoke()</code>即可。因为我将<code>before</code>和<code>after</code>设为了静态，所以<code>Aspect</code>封装的所有方法都会执行相同的<code>Advice</code>，这里不设为静态更好。</p>
+<p>&emsp;&emsp;在学习C#时我就已接触过事件，但当时因为没有实践和具体经验，只觉得复杂且不知所云，今天回看时才意识到了事件的重要性。<br>&emsp;&emsp;考虑玩家在受伤时，除了代码中数值的扣除以外，还有血条UI的更新、屏幕的闪光。而我之前的写法如下：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">TakeDamage</span>()</span><br>&#123;<br>    redMask.DOFade(<span class="hljs-number">0.5f</span>, <span class="hljs-number">0.1f</span>).OnComplete(() =&gt; redMask.DOFade(<span class="hljs-number">0</span>, <span class="hljs-number">0.5f</span>));<br>    SoundManager.Instance.PlayClip(Cofing.se_lgods1);<br>    PlayerManager.Instance.currentLife -= damage;<br>    LifeBarUI.Instance.UpdateActual();<br>    LifeBarUI.Instance.UpdateInner();<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>&emsp;&emsp;容易看出，这种写法有以下问题：方法非常长；该方法所在的类和<code>LifeBarUI</code>、<code>redMask</code>等形成了紧耦合，一崩全崩；这个类必须要对<code>redMask</code>和<code>LifeBarUI</code>进行引用以定位（虽然<code>LifeBarUI</code>有单例，但如果后续逻辑发生变化，这里全部都要修改），同时，还必须知道这些类内部对应的方法叫做什么名字。<br>&emsp;&emsp;但是，<strong>事件</strong>很好地解决了这一问题。我们可以为这个类定义一个事件成员，用它来封装一种类型的委托。如果这个事件成员叫做<code>lifeChanged</code>，那么<code>TakeDamage()</code>可以这样重构：</p>
+<figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">TakeDamage</span>()</span><br>&#123;<br>    SoundManager.Instance.PlayClip(Cofing.se_lgods1);<br>    PlayerManager.Instance.currentLife -= damage;<br>    lifeChanged?.Invoke();<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>&emsp;&emsp;这样的话，我们只需要在<code>LifeBarUI</code>中用这种类型的委托订阅这个事件（假设这个委托的内容是执行<code>UpdateActual()</code>和<code>UpdateInner()</code>）并对玩家进行引用。当<code>TakeDamage()</code>被执行时，<del>它就会大吼一声并扑向</del><code>UpdateActual()</code>和<code>UpdateInner()</code>就会自动执行。这种写法解决了上面出现的问题，例如，使用事件后可以随意删除或修改<code>LifeBarUI</code>而不会使<code>TakeDamage()</code>受到影响；当受伤时需要执行的逻辑发生变化时，也不需要每次都去修改<code>TakeDamage()</code>并引用一大堆乱七八糟的东西。简单理解的话，当事件发生时，所有订阅了事件的类都会执行需要被执行的方法。<br>&emsp;&emsp;当然，我们目前认为事件的用处不大，可能是因为一个人开发的过程中很容易记得这些引用。但其实还有这样一个场景：如果我们进行协作开发，我负责<code>Player</code>部分的逻辑，另一位负责<code>LifeBarUI</code>部分的逻辑，如果按照一开始的写法，我的业务逻辑必须要等到另一位开发完毕后才能完成；而在新的方法下，我们的开发是独立且互不影响的，这极大提高了协作开发的效率。</p>
 </div>
 
 <h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;本文给出原型相当朴素，也有很大的改进空间。例如，为了更加灵活地使用这一原型，也可以用泛型去定义<code>Pointcut</code>；另外，也可以去定义更多种不同类型的<code>Advice</code>。但无论如何，这个原型确实体现了AOP的基本思想。目前在C#的具体应用中，对于AOP有<strong>Castle DynamicProxy</strong>等工具。<br>&emsp;&emsp;谢谢。</p>
+<p>&emsp;&emsp;<strong>软件工程</strong>是一门庞大的学科，我们可以通过各种方法来让自己的代码变得简洁且易于维护。<br>&emsp;&emsp;这两天学校还没有热水，今天被迫洗了个冷水澡。<br>&emsp;&emsp;谢谢。</p>
 </div>
                 
               </div>
@@ -499,7 +502,7 @@
     
       <span class="category-chain">
         
-  <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" class="category-chain-item">工程实践</a>
+  <a href="/categories/%E6%9D%82%E8%B0%88/" class="category-chain-item">杂谈</a>
   
   
 
@@ -519,8 +522,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>基于委托的C#面向切面编程</div>
-      <div>http://hucz-62170.github.io/2026/03/26/Practice001/</div>
+      <div>一周心得（一）</div>
+      <div>http://hucz-62170.github.io/2026/04/06/Tittle-talle001/</div>
     </div>
     <div class="license-meta">
       
@@ -532,7 +535,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年3月26日</div>
+          <div>2026年4月6日</div>
         </div>
       
       
@@ -564,18 +567,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/04/06/Tittle-talle001/" title="一周心得（一）">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">一周心得（一）</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/03/24/CO001/" title="有关存储器的若干理解（一）">
-                        <span class="hidden-mobile">有关存储器的若干理解（一）</span>
+                      <a href="/2026/03/26/Practice001/" title="基于委托的C#面向切面编程">
+                        <span class="hidden-mobile">基于委托的C#面向切面编程</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>

@@ -4,6 +4,25 @@
   
   
   <entry>
+    <title>一周心得（一）</title>
+    <link href="/2026/04/06/Tittle-talle001/"/>
+    <url>/2026/04/06/Tittle-talle001/</url>
+    
+    <content type="html"><![CDATA[<h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><div style="text-align: justify;"><p>&emsp;&emsp;今年清明节的三天假期结束了，我一共抽了两天的时间进行开发。总的来说，这两天的心得还是比较多，所以写一篇文章记录一下。</p></div><h3 id="更好的Boss招式设计"><a href="#更好的Boss招式设计" class="headerlink" title="更好的Boss招式设计"></a>更好的Boss招式设计</h3><div style="text-align: justify;"><p>&emsp;&emsp;目前已经开发到第二个boss刘安。一直以来我对自己的东西都有一个疑惑：为什么我做出来的战斗不像是一场boss战？为什么很多地方给人的感觉和其他动作游戏非常不同？昨天在严肃学习九日（Nine Sols）时好像才发现了我在招式设计中的一个巨大问题：我把所有boss的每个招式都设计成了独立、割裂且互不关联的。以葛洪为例，一阶段他的招式有这些：A.召唤两个自机狙炼丹炉；B.召唤一排炼丹炉下砸；C.移动到屏幕中心召唤一圈炼丹炉，然后回到原位。出招逻辑方面，他的一次攻击包含两个招式，每一招从这三个中随机抽取一招。所以，这给人的观感就是：这些技能各玩各的。即使C有位移，也被我写的逻辑卡死在了最终的位置。<br>&emsp;&emsp;而回看九日中的boss，不难发现他们的共同点：<strong>他们的出招都有一个完整的体系</strong>。以姬为例，他的招式链十分明显：操控一发或两发剑进行攻击（这一招可能重复若干次） -&gt; 召唤黑洞&#x2F;浑天仪&#x2F;五发剑 -&gt; 操控一发或两发剑进行攻击 -&gt; 操控一发剑 -&gt; 可以被太极踢的红光攻击 -&gt; 结束。这是一套非常明确的攻击循环，不仅招式与招式之间有关联，而且这样做才能够控制变招，或者根据当前的情况来决定接下来的行为，也让玩家容易摸清boss的出招方式。<br>&emsp;&emsp;明白了这一点后，我把之前设计好的boss招式全部推翻重做了。最近让我一直发愁到底该怎么设计的刘安，也得到了解决方案。以下是我重构后的招式链：<br><img src="/img/LiuAn.png" alt="刘安的招式链"><br>&emsp;&emsp;通过协程对招式的释放顺序进行控制，不仅做到了变招，也能做到真正意义上<strong>在和玩家战斗</strong>的boss。在未来对boss招式的设计中，也可以将这个攻击循环变为如boss调整位置 -&gt; 攻击前的小招 -&gt; 正式攻击 -&gt; 收尾等更加真实且富有特色的设计。</p></div><h3 id="事件"><a href="#事件" class="headerlink" title="事件"></a>事件</h3><div style="text-align: justify;"><p>&emsp;&emsp;在学习C#时我就已接触过事件，但当时因为没有实践和具体经验，只觉得复杂且不知所云，今天回看时才意识到了事件的重要性。<br>&emsp;&emsp;考虑玩家在受伤时，除了代码中数值的扣除以外，还有血条UI的更新、屏幕的闪光。而我之前的写法如下：</p><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">TakeDamage</span>()</span><br>&#123;<br>    redMask.DOFade(<span class="hljs-number">0.5f</span>, <span class="hljs-number">0.1f</span>).OnComplete(() =&gt; redMask.DOFade(<span class="hljs-number">0</span>, <span class="hljs-number">0.5f</span>));<br>    SoundManager.Instance.PlayClip(Cofing.se_lgods1);<br>    PlayerManager.Instance.currentLife -= damage;<br>    LifeBarUI.Instance.UpdateActual();<br>    LifeBarUI.Instance.UpdateInner();<br>&#125;<br></code></pre></td></tr></table></figure><p>&emsp;&emsp;容易看出，这种写法有以下问题：方法非常长；该方法所在的类和<code>LifeBarUI</code>、<code>redMask</code>等形成了紧耦合，一崩全崩；这个类必须要对<code>redMask</code>和<code>LifeBarUI</code>进行引用以定位（虽然<code>LifeBarUI</code>有单例，但如果后续逻辑发生变化，这里全部都要修改），同时，还必须知道这些类内部对应的方法叫做什么名字。<br>&emsp;&emsp;但是，<strong>事件</strong>很好地解决了这一问题。我们可以为这个类定义一个事件成员，用它来封装一种类型的委托。如果这个事件成员叫做<code>lifeChanged</code>，那么<code>TakeDamage()</code>可以这样重构：</p><figure class="highlight csharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs csharp"><span class="hljs-function"><span class="hljs-keyword">void</span> <span class="hljs-title">TakeDamage</span>()</span><br>&#123;<br>    SoundManager.Instance.PlayClip(Cofing.se_lgods1);<br>    PlayerManager.Instance.currentLife -= damage;<br>    lifeChanged?.Invoke();<br>&#125;<br></code></pre></td></tr></table></figure><p>&emsp;&emsp;这样的话，我们只需要在<code>LifeBarUI</code>中用这种类型的委托订阅这个事件（假设这个委托的内容是执行<code>UpdateActual()</code>和<code>UpdateInner()</code>）并对玩家进行引用。当<code>TakeDamage()</code>被执行时，<del>它就会大吼一声并扑向</del><code>UpdateActual()</code>和<code>UpdateInner()</code>就会自动执行。这种写法解决了上面出现的问题，例如，使用事件后可以随意删除或修改<code>LifeBarUI</code>而不会使<code>TakeDamage()</code>受到影响；当受伤时需要执行的逻辑发生变化时，也不需要每次都去修改<code>TakeDamage()</code>并引用一大堆乱七八糟的东西。简单理解的话，当事件发生时，所有订阅了事件的类都会执行需要被执行的方法。<br>&emsp;&emsp;当然，我们目前认为事件的用处不大，可能是因为一个人开发的过程中很容易记得这些引用。但其实还有这样一个场景：如果我们进行协作开发，我负责<code>Player</code>部分的逻辑，另一位负责<code>LifeBarUI</code>部分的逻辑，如果按照一开始的写法，我的业务逻辑必须要等到另一位开发完毕后才能完成；而在新的方法下，我们的开发是独立且互不影响的，这极大提高了协作开发的效率。</p></div><h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><div style="text-align: justify;"><p>&emsp;&emsp;<strong>软件工程</strong>是一门庞大的学科，我们可以通过各种方法来让自己的代码变得简洁且易于维护。<br>&emsp;&emsp;这两天学校还没有热水，今天被迫洗了个冷水澡。<br>&emsp;&emsp;谢谢。</p></div>]]></content>
+    
+    
+    <categories>
+      
+      <category>杂谈</category>
+      
+    </categories>
+    
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>基于委托的C#面向切面编程</title>
     <link href="/2026/03/26/Practice001/"/>
     <url>/2026/03/26/Practice001/</url>
