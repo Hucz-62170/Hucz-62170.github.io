@@ -17,25 +17,25 @@
   
   <meta name="theme-color" content="#2f4154">
   <meta name="author" content="辉川">
-  <meta name="keywords" content="计算机组成原理,存储器,CO">
+  <meta name="keywords" content="计算机组成原理,运算器,CO,机器数,浮点表示">
   
-    <meta name="description" content="关于存储器的部分内容理解。">
+    <meta name="description" content="关于运算器的部分内容理解。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="有关存储器的若干理解（二）">
-<meta property="og:url" content="http://hucz-62170.github.io/2026/04/08/CO002/index.html">
+<meta property="og:title" content="有关运算器的若干理解（一）">
+<meta property="og:url" content="http://hucz-62170.github.io/2026/04/24/CO003/index.html">
 <meta property="og:site_name" content="川行录">
-<meta property="og:description" content="关于存储器的部分内容理解。">
+<meta property="og:description" content="关于运算器的部分内容理解。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://hucz-62170.github.io/img/CO001.jpg">
-<meta property="article:published_time" content="2026-04-08T02:05:00.000Z">
-<meta property="article:modified_time" content="2026-04-08T10:26:40.314Z">
+<meta property="og:image" content="http://hucz-62170.github.io/img/CO003.jpg">
+<meta property="article:published_time" content="2026-04-24T08:26:00.000Z">
+<meta property="article:modified_time" content="2026-04-24T13:20:02.925Z">
 <meta property="article:author" content="辉川">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="http://hucz-62170.github.io/img/CO001.jpg">
+<meta name="twitter:image" content="http://hucz-62170.github.io/img/CO003.jpg">
   
   
   
-  <title>有关存储器的若干理解（二） - 川行录</title>
+  <title>有关运算器的若干理解（一） - 川行录</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -295,7 +295,7 @@
     <div class="h2">
       
           
-            <span id="subtitle">有关存储器的若干理解（二）</span>
+            <span id="subtitle">有关运算器的若干理解（一）</span>
           
         </div>
 
@@ -306,8 +306,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-04-08 10:05" pubdate>
-          2026年4月8日 上午
+        <time datetime="2026-04-24 16:26" pubdate>
+          2026年4月24日 下午
         </time>
       </span>
     
@@ -318,7 +318,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          全文 4.5k 字
+          全文 3k 字
         
       </span>
     
@@ -329,7 +329,7 @@
         
         
         
-          预计阅读时间 38 分钟
+          预计阅读时间 26 分钟
         
       </span>
     
@@ -447,12 +447,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">有关存储器的若干理解（二）</h1>
+            <h1 id="seo-header">有关运算器的若干理解（一）</h1>
             
               <p id="updated-time" class="note note-info" style="display: none">
                 
                   
-                    本文最后更新于 2026-04-08T18:26:40+08:00
+                    本文最后更新于 2026-04-24T21:20:02+08:00
                   
                   
 
@@ -469,30 +469,29 @@
 
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;这是本分类的第二篇文章。本文将接续上文，继续讨论有关存储器部分的内容。本文中提到的<strong>对数</strong>均以2为底。<br>&emsp;&emsp;本文的参考教材为唐朔飞编写的《计算机组成原理（第三版）》。</p>
+<p>&emsp;&emsp;运算器是计算机的核心组成部分，其负责进行算术运算和逻辑运算，与控制器一同组成了计算机的CPU。而数的正负是运算不可避免的部分，如何让计算机能够识别数的正负并高效地进行运算就成了运算器讨论的核心问题。<br>&emsp;&emsp;本文的参考教材为唐朔飞编写的《计算机组成原理（第三版）》。</p>
 </div>
 
-<h3 id="存储器的校验"><a href="#存储器的校验" class="headerlink" title="存储器的校验"></a>存储器的校验</h3><div style="text-align: justify;">
+<h3 id="机器数与真值"><a href="#机器数与真值" class="headerlink" title="机器数与真值"></a>机器数与真值</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;在交换信息的过程中，数据不免出现差错。为了判断数据是否有误，我们可以使用<strong>奇校验</strong>或<strong>偶校验</strong>。这两种方法的基本原理是：为数据添加一位校验位构成新的数据，保证新数据中有奇数或偶数个1。存储器在拿到数据后，检查新的数据中1的个数是否符合约定，如果不符合，就说明这个数据出现了差错。<br>&emsp;&emsp;不难看出，这两种方式存在一些问题。其一是只能识别奇数个错误；其二是不能将错误精确到位；其三是没有纠错能力。而<strong>汉明码</strong>是基于奇校验或偶校验的，具有一位纠错能力的编码方式。<br>&emsp;&emsp;假设原数据有 $n$ 位，为使其具有纠错能力，需增加 $k$ 位检测位，组成 $n + k$ 位的代码。为了能准确对错误定位以及指出代码是否有误，$k$应满足： $$2^{k} \geq n+k+1$$<br>&emsp;&emsp;这 $k$ 位检测位分别在新数据的第 $2^i$ 位，其中 $i \in \{0, 1, 2, \dots, k-1\}$。每一位校验位承担若干位（视为一个<strong>小组</strong>）的检测任务。我们将检测位记作 $k_i$ （这里的 $i$ 从 $1$ 开始计数），那么 $k_i$ 承担的小组独占新数据的第 $2^{i - 1}$ 位， $k_{i}$ 、 $k_{j}$ 承担的小组共占第 $ 2^{i - 1} + 2^{j - 1}$ 位，以此类推，直到写出所有小组。<br>&emsp;&emsp;以 $4$ 位的数据为例，我们需要增加 $3$ 位检测位，组成 $7$ 位的新数据，其中 $3$ 位检测位分别位于第 $1$ 、 $2$ 、 $4$ 位。 $k_1$ 承担的小组独占新数据的第 $1$ 位，与 $k_2$ 共占新数据的第 $3$ 位，与 $k_3$ 共占新数据的第 $5$ 位，与 $k_2$ 、 $k_3$ 共占新数据的第 $7$ 位。<br>&emsp;&emsp;那么， $k_1$ 承担新数据的第 $1、3、5、7$ 位； $k_2$ 承担新数据的第 $2、3、6、7$ 位； $k_3$ 承担新数据的第 $4、5、6、7$ 位。<br>&emsp;&emsp;$k_{i}$ 的取值取决于汉明码采用奇校验还是偶校验。<br>&emsp;&emsp;在接收方接收到信息后，依次检查各个小组的数据是否符合奇校验或偶校验的规则。例如，当我们使用偶校验时，接收方可以对小组逐位<strong>异或</strong>，如果结果为 $0$ ，则说明该小组的数据没有出错；如果结果为 $1$ ，则说明该小组的数据出现了差错。通过比较其他小组的结果，即可指出出错的位置，并进行纠错。<br>&emsp;&emsp;例如，如果一个4位的信息按偶校验组成汉明码后在传送的过程中第 $1$ 位出现了差错（也就是新数据的第 $3$ 位出现了差错），那么三个小组的异或结果为 $1、1、0$ 。因为第三个小组的异或结果为 $0$ ，所以可以得出新数据的第 $4、5、6、7$ 位都是正确的，那么我们就把范围缩小到了新数据的第 $1、2、3$ 位。只有在第 $3$ 位被修改后，三个小组的异或结果才能同时为 $0$ 。因此，我们就找到了出错的位置，并且可以进行纠错。<br>&emsp;&emsp;我们也可以注意到，将校验结果按高位到低位排序后，得到的十进制结果就是数据出错的位数。这是因为 $k$ 位检测位能表示 $2^{k}$ 种状态（而 $2^{k} - 1$ 又恰好是新数据的位数，因此 $2^{k} - 1 \geq n+k$ ），其中只有 $1$ 种表示数据没有出错，其他的 $2^{k} - 1$ 种每一种都要指代是新数据的哪一位出现了差错。</p>
+<p>&emsp;&emsp;在日常生活中，我们用十进制来表示一个数。在计算机领域，我们将这个数叫做<strong>真值</strong>，而其在计算机中的二进制表示就称为<strong>机器数</strong>。但在二进制中，我们没有办法表示数的正负，也就是说，对于一个 $n + 1$ 位的二进制数，其能表示的数值范围是 $0 \sim 2^{n + 1} - 1$；如果我们用最高位当作符号位（也就是最高位的取值为 $0$ 代表该数为正，取值为 $1$ 代表该数为负），那么其能表示的最大数值范围就是 $-2^{n} \sim +2^{n} - 1 $ 。<br>&emsp;&emsp;如果我们仅考虑能表示数的正负，那么由 $1$ 位符号位和 $n$ 位数值位就构成了真值 $x$ 的<strong>原码</strong>。所以，我们可以得到原码的数学定义：<br>$$<br>[x]_{原} &#x3D;<br>\begin{cases}<br>0, x &amp; 0 \leq x \lt 2^{n} \\<br>2^{n} - x &amp; -2^{n} \lt x \leq 0<br>\end{cases}<br>$$<br>&emsp;&emsp;直观上， $2^{n}$ 表示<strong>$1$ 之后有 $n$ 个 $0$</strong>。对于正数，我们用逗号分隔高位与低位；对于小数，我们用小数点分隔整数部分和小数部分。不难发现，虽然原码解决了数的符号在计算机中的表示问题，但是却存在一些致命缺点：一是原码中存在两个对 $0$ 的表示（即 $+0$ 和 $-0$ ，而这本身没有意义），浪费了一个数；二是对于一个正数和一个负数的加法，在运算时需要先比较两数的绝对值再进行运算，最后的符号位取绝对值较大的一方，这就使得运算器在实现起来极度复杂。<br>&emsp;&emsp;但是，<strong>补码</strong>的出现很好地解决了这两个问题，使得正数与负数的运算变得极其简单。我们知道，对于一个指向四点的钟表，如果我们要让他指向三点，除了逆时针旋转 $30$ 度以外，还可以顺时针旋转 $330$ 度。这是因为 $-30$ 在以 $360$ 为模的情况下与 $+330$ 的模数之和恰好等于模本身。换句话说，在以 $360$ 为模的情况下，一个数与 $-30$ 的和和 $+330$ 的和相同，因此前者就可以用后者代替。在数学上，我们称 $-30$ 是 $330$ 对模 $360$ 而言的<strong>补数</strong>，记作<br>$$ -30 \equiv 330 \pmod{360}$$<br>&emsp;&emsp;因为计算机中一个存储字的位数是有限的，如果超出最大的表示范围，高位会被丢弃，只保留有限的低位。我们容易想到，这本质上也是一种<strong>模运算</strong>。那么，当我们计算正数与负数的和时，就可以将问题变为“找到一个模数，然后找到这个负数对该模数而言的补数”，即可简化减法运算。<br>&emsp;&emsp;对于一个 $n$ 位的带符号二进制数，其模数显然是 $2^{n + 1}$ 。因为对正数讨论补数没有意义，所以正数的补数就是其自身。所以，我们就可以得到补码的数学定义：</p>
+<p>$$<br>[x]_{补} &#x3D;<br>\begin{cases}<br>0, x &amp; 0 \leq x \lt 2^{n} \\<br>2^{n + 1} + x &amp; -2^{n} \leq x \lt 0 &amp; \pmod{2^{n + 1}}<br>\end{cases}<br>$$<br>&emsp;&emsp;虽然补码可以由数学定义进行计算，但与十进制转二进制时，我们可以将十进制拆成 $2^{i}$ 之和一样，对负数求补码有多种简化的方法。一种是<strong>符号位不变，数值位按位取反，然后加 $1$</strong>；另一种是<strong>从最右侧的 $1$ 前一位（含）向左，每位取反，符号位不变</strong>。而要根据补码求真值，根据定义，只需要对补码再求一次补码即可。顺带一提，<strong>符号位不变，数值位按位取反</strong>得到的结果被称作<strong>反码</strong>（正数的反码仍然是其自身），但反码只是从原码到补码的一个中间过渡。<br>&emsp;&emsp;以上我们的讨论均对于整数而言，如果我们要求小数的补码，需要注意其模数固定为 $2$ 。<br>&emsp;&emsp;我们容易看出补码的优势：与原码相比多表示一个负数（因为补码中只有一个 $0$ ，这就是为什么一开始我们说有符号数的<strong>最大数值范围</strong>）；极大简化了减法运算，不需要实现复杂的硬件。但是，通过补码去直接比较数的大小是比较困难的（因为符号位 $1$ 显然看起来比 $0$ 大），为了解决这一问题，就出现了<strong>移码</strong>。<br>&emsp;&emsp;移码是将负数在数轴上向正轴移动若干个单位，使得最小的负数为 $0$ ，即可很方便地比较数的大小。补码的定义如下：</p>
+<p>$$ [x]_{移} &#x3D; 2^{n} + x \qquad -2^{n} \leq x \lt 2^{n} $$<br>&emsp;&emsp;我们只需要将补码的符号位取反，即可得到该真值的移码。</p>
 </div>
 
-<h3 id="程序的局部性原理"><a href="#程序的局部性原理" class="headerlink" title="程序的局部性原理"></a>程序的局部性原理</h3><div style="text-align: justify;">
+<h3 id="数的浮点表示"><a href="#数的浮点表示" class="headerlink" title="数的浮点表示"></a>数的浮点表示</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;局部性原理一般指的是程序的<strong>时间局部性</strong>、<strong>空间局部性</strong>和<strong>顺序局部性</strong>。时间局部性是指，一个已经被访问的存储单元在未来还会被访问；空间局部性是指，程序执行时需要访问的存储单元在主存中总是连续的；顺序局部性是指，CPU默认执行完一条指令大概率会执行下一条。如果一个程序具有良好的局部性，那么我们就可以通过在CPU和主存之间增设<strong>Cache</strong>（高速缓冲存储器）来平衡二者的速度差异，从而提高程序的执行效率。</p>
+<p>&emsp;&emsp;在计算机中，小数点不用专门的器件表示，而是按约定的方式给出。对于定点机而言，小数点的位置是固定的，通常在第一位或最后一位；而对于浮点机而言，小数点可以出现在任意位置。显然，浮点表示比定点表示更加灵活，而且能表示的数的范围更大。我们现在讨论数的浮点表示方法。<br>&emsp;&emsp;一般地，一个浮点数被表示为：<br>$$<br>N &#x3D; S \times r^{j}<br>$$<br>&emsp;&emsp;其中， $S$ 表示<strong>尾数</strong>， $r$ 表示<strong>基数</strong>（通常是 $2、4、8$ 或 $16$ ）, $j$ 表示<strong>阶码</strong>，尾数和阶码均为二进制。实际上，这和科学计数法的表示方法基本相同。那么我们就不难看出，尾数的位数表示浮点数的<strong>精度</strong>，而阶码的位数和基数则表示浮点数所能表示的<strong>范围</strong>，其中阶码的数值就表示了小数点的实际位置。<br>&emsp;&emsp;如果尾数的最高位为 $1$ ，那么我们说这个浮点数是<strong>规格化数</strong>。例如， $0.1001 \times 2^{100}$ 就是一个规格化形式，此时浮点数的精度最高。如果一个浮点数不是规格化形式，那么我们就要将其进行规格化，移动小数点的位置，并相应地修改阶码。同样的，当基数为 $4$ 时，规格化数的最高两位不全为零；当基数为 $8$ 时，最高三位不全为零。</p>
 </div>
 
-<h3 id="高速缓冲存储器"><a href="#高速缓冲存储器" class="headerlink" title="高速缓冲存储器"></a>高速缓冲存储器</h3><div style="text-align: justify;">
+<h3 id="IEEE-754标准"><a href="#IEEE-754标准" class="headerlink" title="IEEE 754标准"></a>IEEE 754标准</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;我们知道，存储器的存储体由若干个可编址的存储单元构成，一个存储单元存放若干位二进制信息（后文中默认一个存储单元存储一个<strong>字</strong>）。那么，根据局部性原理，我们可以将存储体分为若干个字块，当一个字块中的某一个字被访问时，就将这个字块映射到Cache中。这样，这个字块中的其他字就可以直接通过Cache读取，而不必访问主存。<br>&emsp;&emsp;主存和Cache中的字块存储的字的数量是相同的。</p>
-<h4 id="读操作和性能指标"><a href="#读操作和性能指标" class="headerlink" title="读操作和性能指标"></a>读操作和性能指标</h4><p>&emsp;&emsp;CPU需要对主存进行读操作时，会先根据地址来判断这个字是否已经在Cache中，如果在，那么直接从Cache中读取（称为<strong>命中</strong>）；如果不在，那么则需要去访问主存（称为<strong>未命中</strong>），然后将这个字所在的字块按照一定的规则映射到Cache中。显然，命中时，访问数据的时间即访问Cache的时间 $t_{c}$ ；未命中时，访问数据的时间即访问主存的时间 $t_{m}$ 。<br>&emsp;&emsp;综上，我们可以定义一些有关Cache的性能指标，包括命中率 $h$ 、平均访问时间 $t_{a}$ 和访问效率 $e$ 。如果在一个程序的执行过程中，访问Cache的次数为 $N_{c}$， 访问主存的次数为 $N_{m}$ ，那么有：<br>$$<br>h&#x3D;\frac{N_{c}}{N_{c} + N_{m}}\qquad<br>t_{a} &#x3D; ht_{c} + (1 - h)t_{m}\qquad<br>e &#x3D; \frac{t_{c}}{t_{a}} \times 100\%<br>$$</p>
-<h4 id="写操作"><a href="#写操作" class="headerlink" title="写操作"></a>写操作</h4><p>&emsp;&emsp;CPU需要对主存进行写操作时，也会根据地址先判断这个字是否在Cache中。但是，由于同样的数据即存放在Cache中，也存放在主存中，为了保证数据一致，就需要再将Cache中的数据写入主存。目前我们会采用两种写的方式。第一种方式为<strong>写直达法</strong>，即写操作时，既写入Cache，又写入主存。它能保证Cache与主存的数据始终一致，但增加了访存次数，因此，CPU的写时间仍然是主存的访问时间。第二种方式为<strong>写回法</strong>，它不是立刻将数据写入主存，而是当这个数据从Cache中被替换出去时，再将被修改过的数据写入主存。为了判断Cache中的数据是否被修改过，我们为Cache的每个字块增加一位标志位，这一位的取值分别表示“清”（数据未修改过）和“浊”（数据被修改过）。<br>&emsp;&emsp;这两种方式各有特色。写直达法的读操作不涉及对主存的写操作，更新策略比较容易实现；写回法降低了写操作的访问时间，但增加了Cache的复杂性。</p>
-<h4 id="映射方式"><a href="#映射方式" class="headerlink" title="映射方式"></a>映射方式</h4><p>&emsp;&emsp;我们知道，主存的容量远远大于Cache的容量。因此，一个Cache字块不可能永远、唯一地对应主存的一个字块，会被频繁替换。为了让CPU能够判断数据是否在Cache中，我们要为每个字块前加上 $t$ 位的标记， $t$ 即该字块在主存中的编号（即<strong>块地址</strong>）。同时，地址也被分为了<strong>块地址</strong>（ $m$ 位）和<strong>块内地址</strong>（ $b$ 位），前者用于定位具体的块，后者用于定位块中具体的字。所以，当Cache中有<strong>块地址</strong>与地址线上的<strong>块地址</strong>相同时，这一块中的所有数据就都被存放到了Cache中。<br>&emsp;&emsp;前面我们说过，字块会按照一定的<strong>规则</strong>被映射到Cache中。本书介绍了三种映射方式。<br>&emsp;&emsp;<strong>直接映射</strong>指的是主存的每个字块只对应Cache中的一个字块，以Cache的块数为模。例如，如果主存有 $2^{m}$ 个字块，Cache有 $2^{c}$个字块（从 $0$ 开始计数），Cache的第 $0$ 个字块对应的就是主存的第 $0、2^{c}、2^{c + 1}、2^{c + 2}、 \dots $ 个字块；Cache的第 $2^{c} - 1$ 个字块对应的就是主存的第 $2^{c} - 1、2^{c + 1} - 1、\dots $ 个字块。<br>&emsp;&emsp;Cache块数 $c$ 的<strong>对数</strong> $a$ 就是标记位的位数。在这种情况下，我们把 $m$ 位的块地址分成了两部分：一部分是 $t$ 位的主存字块地址，另一部分是 $a$ 位的Cache字块地址（即标记位）。<br>&emsp;&emsp;容易看出，这种方式实现起来非常简单，但是不够灵活，命中率较低。如果主存要依次访问第 $0 、2^{c} - 1$ 个字块，且每个字块只访问一次，那么Cache就形同虚设。<br>&emsp;&emsp;<strong>全相联映射</strong>解决了直接映射不够灵活的问题。他的原理非常简单：主存中的每个字块都能被映射到任意一个Cache的字块中。这种方式对Cache的利用率最高，命中率也更高，但是由于标记位 $t$ 往往较长（位数为主存块数的<strong>对数</strong>），它的成本较高，实现起来也比较复杂。<br>&emsp;&emsp;<strong>组相联映射</strong>是前两种映射方式的折中，也是普遍使用的映射方式。它既包含直接映射的思想，也包含全相联映射的思想。它的基本原理是：在Cache已被分成若干个字块的前提下，再将Cache按照若干个字块分成若干组，主存中的某一块按照直接映射的规则（即对组数取模）映射到某一组的任意一块当中。容易看出，当每一组只包含一块时，这种方式就是<strong>直接映射</strong>，当Cache只有一组时，这种方式就是<strong>全相联映射</strong>。进一步地，我们将 $m$ 位的块地址分成两个部分：一部分是 $s$ 位的主存字块标记，另一部分是 $q$ 位的组地址。例如，当主存有 $2^{m}$ 个字块，Cache有 $2^{c}$ 个字块，且每个分组含有 $2^{r}$ 个字块时，Cache就被分成了 $2^{c - r}$ 组。地址线上的块地址有 $m$ 位，其中低 $c-r$ 位（也就是 $q$ ）即为组地址。当每组包含 $2$ 块时，这种映射方式一般被称作<strong>二路组相联</strong>；当每组包含 $4$ 块时，这种映射方式一般被称作<strong>四路组相联</strong>。<br>&emsp;&emsp;综上，我们能意识到一些问题：块长与命中率之间的关系比较复杂，它取决于程序的局部性。如果块长较小，Cache就需要频繁替换，命中率不高；如果块长较长，所装入的有用数据反而会小于被替换掉的有用数据，命中率也不高。因此，块长的最优值是很难确定的，一般每块取 $4$ 至  $8$ 个可编址单位，或一个主存周期所能调出的信息长度。<br>&emsp;&emsp;另外，即使在映射方式相同的情况下，命中率也仍然不是一个定值。这和程序的局部性有关。一般来说，如果程序有着良好的局部性，那么命中率就较高。</p>
+<p>&emsp;&emsp;现代计算机中，浮点数一般采用IEEE制定的国际标准。该标准规定一个浮点数的最高位为<strong>数符</strong>，表示数的正负；后 $m$ 位为<strong>阶码</strong>，其中包含 $1$ 位阶符；最后 $n$ 位为<strong>尾数</strong>。但在IEEE 754标准中，规格化的尾数与前面介绍的略有不同，它被表示为 $1.fffff\dots$，而且最高位的 $1$ 是<strong>隐含</strong>的，不在数值中表示。同时，该标准的阶码使用移码表示，其偏移量为 $127$ （如果该浮点数为 $32$ 位），在非754标准中，偏移量通常为 $128$。另外，当阶码为<strong>全 $0$</strong> 时，该数被看作 $0$ ；当阶码为<strong>全 $1$</strong> 时，该数被看作无穷大。</p>
 </div>
 
 <h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;到目前我意识到，学习CO能够从微观的角度帮助我们了解计算机的工作和运行原理，这是十分重要的。<br>&emsp;&emsp;谢谢。</p>
+<p>&emsp;&emsp;很多平常就会令我感到焦虑的小事巧合地发生在了这一周，今天下午我的焦虑更是达到了巅峰。这一周我过得并不好。<br>&emsp;&emsp;谢谢。</p>
 </div>
                 
               </div>
@@ -531,8 +530,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>有关存储器的若干理解（二）</div>
-      <div>http://hucz-62170.github.io/2026/04/08/CO002/</div>
+      <div>有关运算器的若干理解（一）</div>
+      <div>http://hucz-62170.github.io/2026/04/24/CO003/</div>
     </div>
     <div class="license-meta">
       
@@ -544,7 +543,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年4月8日</div>
+          <div>2026年4月24日</div>
         </div>
       
       
@@ -576,18 +575,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/04/24/CO003/" title="有关运算器的若干理解（一）">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">有关运算器的若干理解（一）</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/04/06/Tittle-talle001/" title="一周心得（一）">
-                        <span class="hidden-mobile">一周心得（一）</span>
+                      <a href="/2026/04/08/CO002/" title="有关存储器的若干理解（二）">
+                        <span class="hidden-mobile">有关存储器的若干理解（二）</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
