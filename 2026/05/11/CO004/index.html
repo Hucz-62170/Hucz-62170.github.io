@@ -17,25 +17,25 @@
   
   <meta name="theme-color" content="#2f4154">
   <meta name="author" content="辉川">
-  <meta name="keywords" content="计算机组成原理,运算器,CO,机器数,浮点表示">
+  <meta name="keywords" content="计算机组成原理,运算器,CO,四则运算,浮点表示">
   
     <meta name="description" content="关于运算器的部分内容理解。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="有关运算器的若干理解（一）">
-<meta property="og:url" content="http://hucz-62170.github.io/2026/04/24/CO003/index.html">
+<meta property="og:title" content="有关运算器的若干理解（二）">
+<meta property="og:url" content="http://hucz-62170.github.io/2026/05/11/CO004/index.html">
 <meta property="og:site_name" content="川行录">
 <meta property="og:description" content="关于运算器的部分内容理解。">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://hucz-62170.github.io/img/CO003.jpg">
-<meta property="article:published_time" content="2026-04-24T08:26:00.000Z">
-<meta property="article:modified_time" content="2026-04-24T13:20:02.925Z">
+<meta property="article:published_time" content="2026-05-11T06:38:00.000Z">
+<meta property="article:modified_time" content="2026-05-12T10:11:17.432Z">
 <meta property="article:author" content="辉川">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="http://hucz-62170.github.io/img/CO003.jpg">
   
   
   
-  <title>有关运算器的若干理解（一） - 川行录</title>
+  <title>有关运算器的若干理解（二） - 川行录</title>
 
   <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
 
@@ -295,7 +295,7 @@
     <div class="h2">
       
           
-            <span id="subtitle">有关运算器的若干理解（一）</span>
+            <span id="subtitle">有关运算器的若干理解（二）</span>
           
         </div>
 
@@ -306,8 +306,8 @@
     
       <span class="post-meta">
         <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2026-04-24 16:26" pubdate>
-          2026年4月24日 下午
+        <time datetime="2026-05-11 14:38" pubdate>
+          2026年5月11日 下午
         </time>
       </span>
     
@@ -318,7 +318,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          全文 3k 字
+          全文 4.1k 字
         
       </span>
     
@@ -329,7 +329,7 @@
         
         
         
-          预计阅读时间 26 分钟
+          预计阅读时间 35 分钟
         
       </span>
     
@@ -447,12 +447,12 @@
       <div class="container nopadding-x-md" id="board-ctn">
         <div id="board">
           <article class="post-content mx-auto">
-            <h1 id="seo-header">有关运算器的若干理解（一）</h1>
+            <h1 id="seo-header">有关运算器的若干理解（二）</h1>
             
               <p id="updated-time" class="note note-info" style="display: none">
                 
                   
-                    本文最后更新于 2026-04-24T21:20:02+08:00
+                    本文最后更新于 2026-05-12T18:11:17+08:00
                   
                   
 
@@ -469,29 +469,34 @@
 
 <h3 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;运算器是计算机的核心组成部分，其负责进行算术运算和逻辑运算，与控制器一同组成了计算机的CPU。而数的正负是运算不可避免的部分，如何让计算机能够识别数的正负并高效地进行运算就成了运算器讨论的核心问题。<br>&emsp;&emsp;本文的参考教材为唐朔飞编写的《计算机组成原理（第三版）》。</p>
+<p>&emsp;&emsp;这是本分类的第四篇文章。本文将接续上文，继续讨论有关运算器部分的内容。<br>&emsp;&emsp;本文的参考教材为唐朔飞编写的《计算机组成原理（第三版）》。</p>
 </div>
 
-<h3 id="机器数与真值"><a href="#机器数与真值" class="headerlink" title="机器数与真值"></a>机器数与真值</h3><div style="text-align: justify;">
+<h3 id="移位运算"><a href="#移位运算" class="headerlink" title="移位运算"></a>移位运算</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;在日常生活中，我们用十进制来表示一个数。在计算机领域，我们将这个数叫做<strong>真值</strong>，而其在计算机中的二进制表示就称为<strong>机器数</strong>。但在二进制中，我们没有办法表示数的正负，也就是说，对于一个 $n + 1$ 位的二进制数，其能表示的数值范围是 $0 \sim 2^{n + 1} - 1$；如果我们用最高位当作符号位（也就是最高位的取值为 $0$ 代表该数为正，取值为 $1$ 代表该数为负），那么其能表示的最大数值范围就是 $-2^{n} \sim +2^{n} - 1 $ 。<br>&emsp;&emsp;如果我们仅考虑能表示数的正负，那么由 $1$ 位符号位和 $n$ 位数值位就构成了真值 $x$ 的<strong>原码</strong>。所以，我们可以得到原码的数学定义：<br>$$<br>[x]_{原} &#x3D;<br>\begin{cases}<br>0, x &amp; 0 \leq x \lt 2^{n} \\<br>2^{n} - x &amp; -2^{n} \lt x \leq 0<br>\end{cases}<br>$$<br>&emsp;&emsp;直观上， $2^{n}$ 表示<strong>$1$ 之后有 $n$ 个 $0$</strong>。对于正数，我们用逗号分隔高位与低位；对于小数，我们用小数点分隔整数部分和小数部分。不难发现，虽然原码解决了数的符号在计算机中的表示问题，但是却存在一些致命缺点：一是原码中存在两个对 $0$ 的表示（即 $+0$ 和 $-0$ ，而这本身没有意义），浪费了一个数；二是对于一个正数和一个负数的加法，在运算时需要先比较两数的绝对值再进行运算，最后的符号位取绝对值较大的一方，这就使得运算器在实现起来极度复杂。<br>&emsp;&emsp;但是，<strong>补码</strong>的出现很好地解决了这两个问题，使得正数与负数的运算变得极其简单。我们知道，对于一个指向四点的钟表，如果我们要让他指向三点，除了逆时针旋转 $30$ 度以外，还可以顺时针旋转 $330$ 度。这是因为 $-30$ 在以 $360$ 为模的情况下与 $+330$ 的模数之和恰好等于模本身。换句话说，在以 $360$ 为模的情况下，一个数与 $-30$ 的和和 $+330$ 的和相同，因此前者就可以用后者代替。在数学上，我们称 $-30$ 是 $330$ 对模 $360$ 而言的<strong>补数</strong>，记作<br>$$ -30 \equiv 330 \pmod{360}$$<br>&emsp;&emsp;因为计算机中一个存储字的位数是有限的，如果超出最大的表示范围，高位会被丢弃，只保留有限的低位。我们容易想到，这本质上也是一种<strong>模运算</strong>。那么，当我们计算正数与负数的和时，就可以将问题变为“找到一个模数，然后找到这个负数对该模数而言的补数”，即可简化减法运算。<br>&emsp;&emsp;对于一个 $n$ 位的带符号二进制数，其模数显然是 $2^{n + 1}$ 。因为对正数讨论补数没有意义，所以正数的补数就是其自身。所以，我们就可以得到补码的数学定义：</p>
-<p>$$<br>[x]_{补} &#x3D;<br>\begin{cases}<br>0, x &amp; 0 \leq x \lt 2^{n} \\<br>2^{n + 1} + x &amp; -2^{n} \leq x \lt 0 &amp; \pmod{2^{n + 1}}<br>\end{cases}<br>$$<br>&emsp;&emsp;虽然补码可以由数学定义进行计算，但与十进制转二进制时，我们可以将十进制拆成 $2^{i}$ 之和一样，对负数求补码有多种简化的方法。一种是<strong>符号位不变，数值位按位取反，然后加 $1$</strong>；另一种是<strong>从最右侧的 $1$ 前一位（含）向左，每位取反，符号位不变</strong>。而要根据补码求真值，根据定义，只需要对补码再求一次补码即可。顺带一提，<strong>符号位不变，数值位按位取反</strong>得到的结果被称作<strong>反码</strong>（正数的反码仍然是其自身），但反码只是从原码到补码的一个中间过渡。<br>&emsp;&emsp;以上我们的讨论均对于整数而言，如果我们要求小数的补码，需要注意其模数固定为 $2$ 。<br>&emsp;&emsp;我们容易看出补码的优势：与原码相比多表示一个负数（因为补码中只有一个 $0$ ，这就是为什么一开始我们说有符号数的<strong>最大数值范围</strong>）；极大简化了减法运算，不需要实现复杂的硬件。但是，通过补码去直接比较数的大小是比较困难的（因为符号位 $1$ 显然看起来比 $0$ 大），为了解决这一问题，就出现了<strong>移码</strong>。<br>&emsp;&emsp;移码是将负数在数轴上向正轴移动若干个单位，使得最小的负数为 $0$ ，即可很方便地比较数的大小。补码的定义如下：</p>
-<p>$$ [x]_{移} &#x3D; 2^{n} + x \qquad -2^{n} \leq x \lt 2^{n} $$<br>&emsp;&emsp;我们只需要将补码的符号位取反，即可得到该真值的移码。</p>
+<p>&emsp;&emsp;在介绍算术运算之前我们先来介绍一下<strong>移位运算</strong>。移位运算指的就是将数向左或向右移动若干位，然后获得新的数字。例如，二进制数 $0110$ 左移一位（也可以理解成小数点右移一位）的结果是 $1100$ ， 右移一位（或小数点左移一位）的结果是 $0011$ 。我们容易发现，对于 $n$ 进制数而言，左移一位即将这个数变为了原来的 $n$ 倍， 右移一位即将这个数变为了原来的 $\frac{1}{n}$ 。在移位结束后，高位或低位会出现空缺。为了保证结果是正确的，我们需要将该位填入该码制下代表的 $0$ 。例如，对于原码而言，我们填入 $0$ 即可；对于反码而言，我们填入 $1$ 即可；但对于补码，我们需要在高位填入 $1$， 低位填入 $0$ （因为从原码得到补码时，从最低位开始总是保持不变，直到遇到第一个 $1$ ， 然后之后的高位总是取反）。<br>&emsp;&emsp;我们知道，机器数带有符号，用最高位的取值表示这个数的正负，只有在符号位保持不变的情况下，左移或右移才会使数值发生正确的变化。因此，移位运算分为<strong>算术移位</strong>和<strong>逻辑移位</strong>。算术移位指的是符号位保持不变，数值位进行移位；而逻辑移位指的是连同符号位在内一同移位。</p>
 </div>
 
-<h3 id="数的浮点表示"><a href="#数的浮点表示" class="headerlink" title="数的浮点表示"></a>数的浮点表示</h3><div style="text-align: justify;">
+<h3 id="定点数的算术运算"><a href="#定点数的算术运算" class="headerlink" title="定点数的算术运算"></a>定点数的算术运算</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;在计算机中，小数点不用专门的器件表示，而是按约定的方式给出。对于定点机而言，小数点的位置是固定的，通常在第一位或最后一位；而对于浮点机而言，小数点可以出现在任意位置。显然，浮点表示比定点表示更加灵活，而且能表示的数的范围更大。我们现在讨论数的浮点表示方法。<br>&emsp;&emsp;一般地，一个浮点数被表示为：<br>$$<br>N &#x3D; S \times r^{j}<br>$$<br>&emsp;&emsp;其中， $S$ 表示<strong>尾数</strong>， $r$ 表示<strong>基数</strong>（通常是 $2、4、8$ 或 $16$ ）, $j$ 表示<strong>阶码</strong>，尾数和阶码均为二进制。实际上，这和科学计数法的表示方法基本相同。那么我们就不难看出，尾数的位数表示浮点数的<strong>精度</strong>，而阶码的位数和基数则表示浮点数所能表示的<strong>范围</strong>，其中阶码的数值就表示了小数点的实际位置。<br>&emsp;&emsp;如果尾数的最高位为 $1$ ，那么我们说这个浮点数是<strong>规格化数</strong>。例如， $0.1001 \times 2^{100}$ 就是一个规格化形式，此时浮点数的精度最高。如果一个浮点数不是规格化形式，那么我们就要将其进行规格化，移动小数点的位置，并相应地修改阶码。同样的，当基数为 $4$ 时，规格化数的最高两位不全为零；当基数为 $8$ 时，最高三位不全为零。</p>
+<p>&emsp;&emsp;对于算术运算而言，减法是最核心也是最重要的部分。在上一篇文章中我们已经讨论过，如果不使用补码，那么减法实现起来将会相当复杂。因此在计算机中，我们总是使用补码来完成加减运算。我们有:</p>
+<p>$$<br>\begin{aligned}<br>&amp; [x + y]_{补} &#x3D; [x]_{补} + [y]_{补} &amp; \pmod{2^{n + 1}} \\<br>&amp; [x - y]_{补} &#x3D; [x + (-y)]_{补} &#x3D; [x]_{补} + [-y]_{补} &amp; \pmod{2^{n + 1}}<br>\end{aligned}<br>$$</p>
+<p>&emsp;&emsp;因此对于加减运算而言，我们只需要将真值变为补码，然后对补码作加减运算即可。对于乘法运算，当我们在计算两个十进制数的乘法时，结果的数值部分是两数绝对值相乘的结果，符号取两数符号位的异或结果。那么对于二进制数，我们在计算时，可以将符号位和数值位分别考虑。<br>&emsp;&emsp;进一步地，对于十进制下的 $A \times B$ ，我们先让 $A$ 的每位与 $B$ 的个位相乘，得到一个结果，然后再让 $A$ 的每位与 $B$ 的十位相乘，得到一个结果并将其扩大 $10$ 倍，然后与前一个结果相加（后文中称为<strong>部分积</strong>）；然后再让 $A$ 的每位与 $B$ 的百位相乘，得到一个结果并将其扩大 $10^{2}$ 倍，然后与前一个结果相加，以此类推，直到乘到 $B$ 的最高位后，最后得到的就是 $A \times B$ 。<br>&emsp;&emsp;那么，因为二进制数的每一位只有两种取值，这个过程将变得极其简单。每次如果被乘数的对应位是 $0$ ，那么直接将部分积<strong>逻辑右移</strong>一位即可；如果被乘数对应位是 $1$ ，就将部分积先<strong>逻辑右移</strong>一位，然后高位加上被乘数即可。在运算器中，我们用寄存器 $ACC$ 来保存乘积高位， $MQ$ 用来保存乘积低位和被乘数（因为被乘数的每一位在计算后可以直接丢弃）， $X$ 用来保存乘数。那么，上一个过程就变为了： $ACC$ 初始是 $0$ ，每一步检查 $MQ$ 的最低位，如果为 $0$ ，则直接将 $ACC$ 和 $MQ$ 逻辑右移一位（ $MQ$ 的高位存放 $ACC$ 移丢的值）；如果为 $1$， 则 $ACC &#x3D; ACC + X$ ，然后将 $ACC$ 和 $MQ$ 逻辑右移一位（ $MQ$ 的高位存放 $ACC$ 移丢的值），直到被乘数被全部移丢，最后 $ACC$ 的结果就是乘积高位， $MQ$ 的结果就是乘积低位，符号位取两数的符号位异或结果即可。<br>&emsp;&emsp;除法的原理和乘法类似，这里暂时先不作介绍。<br>&emsp;&emsp;我们需要注意，对于两个同符号位的数的和，结果可能会超出数值位表示的范围，这时就造成了<strong>溢出</strong>，即结果的符号位和原符号位不同，比如两个正数相加结果得到了负数。为了节省时间，我们一般用符号位产生的进位和数值位产生的进位作<strong>异或</strong>来进行溢出判断。如果异或结果为 $1$ ，则说明出现了溢出，但这种方法实现起来有些复杂。<br>&emsp;&emsp;另一种判断溢出的方法是使用<strong>变形补码</strong>。变形补码是用两位来表示符号位，全 $0$ 表示正数，全 $1$ 表示负数。所以，如果两位符号位的异或结果为 $1$ ，则说明出现了溢出，但这种方法缩小了数值位所能表示的范围。</p>
 </div>
 
-<h3 id="IEEE-754标准"><a href="#IEEE-754标准" class="headerlink" title="IEEE 754标准"></a>IEEE 754标准</h3><div style="text-align: justify;">
+<h3 id="浮点数的算术运算"><a href="#浮点数的算术运算" class="headerlink" title="浮点数的算术运算"></a>浮点数的算术运算</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;现代计算机中，浮点数一般采用IEEE制定的国际标准。该标准规定一个浮点数的最高位为<strong>数符</strong>，表示数的正负；后 $m$ 位为<strong>阶码</strong>，其中包含 $1$ 位阶符；最后 $n$ 位为<strong>尾数</strong>。但在IEEE 754标准中，规格化的尾数与前面介绍的略有不同，它被表示为 $1.fffff\dots$，而且最高位的 $1$ 是<strong>隐含</strong>的，不在数值中表示。同时，该标准的阶码使用移码表示，其偏移量为 $127$ （如果该浮点数为 $32$ 位），在非754标准中，偏移量通常为 $128$。另外，当阶码为<strong>全 $0$</strong> 时，该数被看作 $0$ ；当阶码为<strong>全 $1$</strong> 时，该数被看作无穷大。</p>
+<p>&emsp;&emsp;在介绍过定点数的算术运算后，浮点数的算术运算就很容易理解。其基本原理与定点数的四则运算相同，但我们需要注意：对于浮点数的加减运算，我们在对尾数进行求和之前，必须保证两数的小数点位置是对齐的，即阶码的数值必须一致，这个过程我们叫做<strong>对阶</strong>。我们规定对阶时，总是<strong>小阶向大阶对齐</strong>。对阶完成后，我们即可按照定点数的加减运算规则求尾数的和。同时对于结果，如果尾数不是规格化数，我们仍然需要进行<strong>规格化</strong>，并且在规格化的过程中，为了保证精度，我们还需要做<strong>舍入</strong>操作。<br>&emsp;&emsp;当尾数求和的结果没有溢出时，我们在做规格化时总是进行左规，即尾数逻辑左移一位，阶码 $+1$ ；如果使用变形补码，尾数求和的结果溢出时，其结果的符号位为 $01$ 或 $10$ 。虽然这在定点数的加减运算下是不允许的，但在浮点数中，这只是暂时的，我们可以通过右规来进行处理。做右规时，尾数逻辑右移一位，阶码 $-1$ ，然后最高位的取值为移位前符号位最高位的取值。<br>&emsp;&emsp;在做右规时，因为最低位会被移丢，这可能会影响结果的精度。因此，我们考虑使用<strong>舍入法</strong>。一种方法是使用<strong> $0$ 舍 $1$ 入</strong>，与十进制的四舍五入相同，当移丢该码制下代表的 $0$ 时，我们不做处理；当移丢该码制下代表的 $1$ 时，我们就使尾数 $+1$ 。这样做可能使尾数又溢出，我们需要再做一次右规。另一种方法是<strong>恒置 $1$ 法</strong>，无论移丢的数取值为何，我们总是使右移后的尾数末尾恒置该码制下代表的 $1$ ，但这种方法同样有使得尾数变大或变小的两种可能。<br>&emsp;&emsp;在浮点数中，如果阶码超出了所能表示的范围，则说明该浮点数出现了溢出。如果阶码小于最小值，称作<strong>下溢</strong>，我们将该浮点数当作机器零并继续运算；如果阶码大于最大值，我们称作<strong>上溢</strong>，这时机器需要停止运算并做溢出中断处理。我们说浮点数溢出一般指的是<strong>上溢</strong>。在变形补码中，阶符的符号位取值为 $10$ 代表下溢，取值为 $01$ 代表上溢。<br>&emsp;&emsp;浮点数的乘除运算和定点数的乘除运算相同。在做乘法时，我们让尾数相乘，然后阶码取和；做除法时，我们让尾数相除，然后阶码取差即可。</p>
+</div>
+
+<h3 id="算术逻辑单元"><a href="#算术逻辑单元" class="headerlink" title="算术逻辑单元"></a>算术逻辑单元</h3><div style="text-align: justify;">
+
+<p>&emsp;&emsp;我们知道，全加器在做二进制数 $A + B$ 时，每一位需要三个输入：除了 $A_{i}$ 和 $B_{i}$ ，还需要上一位的进位 $C_{i - 1}$ ；输出为本位的和 $S_{i}$ 和本位产生的进位 $C_{i}$ 。也就是说，我们需要上一位的输出当作这一位的输入。在计算机中， $n$ 个全加器可以构成一个 $n$ 位的加法器。而上面讲述的高位运算需要低位先运算，再将结果一级一级向前传递的进位方式叫做<strong>串行进位</strong>，这种方式计算起来显然会比较慢。<br>&emsp;&emsp;但是，我们知道全加器的逻辑表达式：<br>$$<br>C_{i} &#x3D; \overline{A_{i}}B_{i}C_{i-1} + A_{i}\overline{B_{i}}C_{i-1} + A_{i}B_{i}\overline{C_{i-1}}<br>$$<br>&emsp;&emsp;进一步地，我们可以简化为：<br>$$<br>C_{i} &#x3D; A_{i}B_{i} + (A_{i} + B_{i})C_{i - 1}<br>$$<br>&emsp;&emsp;其中， $A_{i}B_{i}$ 称作<strong>本地进位</strong>，我们记作 $d_{i}$ ； $A_{i} + B_{i}$ 称作<strong>传递条件</strong>，我们记作 $t_{i}$ 。那么：<br>$$<br>C_{i} &#x3D; d_{i} + t_{i}C_{i-1}<br>$$<br>&emsp;&emsp;则我们可以得到：<br>$$<br>\left.<br>    \begin{array}{l}<br>    C_{0} &#x3D; d_{0} + t_{0}C_{-1} \\<br>    C_{1} &#x3D; d_{1} + t_{1}(d_{0} + t_{0}C_{-1}) \\<br>    C_{2} &#x3D; d_{2} + t_{2}(d_{1} + t_{1}(d_{0} + t_{0}C_{-1})) \\<br>    C_{3} &#x3D; d_{3} + t_{3}(d_{2} + t_{2}(d_{1} + t_{1}(d_{0} + t_{0}C_{-1}))) \\<br>    \dots<br>    \end{array}<br>\right\}<br>$$<br>&emsp;&emsp;我们可以看到，通过这种方法，每一位的结果已经不需要依赖上一位的结果，而只需要 $C_{-1}$ （当然，这一位有可能没有）。也就是说，只要知道 $C_{-1}$ ，所有位的进位都能同时产生，而不像串行进位那样需要一级一级产生，这样就极大提高了速度。这种进位方式我们叫做<strong>并行进位</strong>。<br>&emsp;&emsp;这种方式虽然速度很快，但我们也可以看到，从 $C_{2}$ 开始，这个运算式就已经变得极其复杂了，所以实际实现起来会有困难。所以，我们一般将 $n$ 位全加器分成若干小组，小组内使用并行进位，小组间使用串行进位，这样既保证了速度，又不至于过于复杂，这种方式我们称作<strong>单重分组跳跃进位</strong>。</p>
 </div>
 
 <h3 id="结语"><a href="#结语" class="headerlink" title="结语"></a>结语</h3><div style="text-align: justify;">
 
-<p>&emsp;&emsp;很多平常就会令我感到焦虑的小事巧合地发生在了这一周，今天下午我的焦虑更是达到了巅峰。这一周我过得并不好。<br>&emsp;&emsp;谢谢。</p>
+<p>&emsp;&emsp;感觉有很多东西在我写下时才比较好的理解了。<br>&emsp;&emsp;谢谢。</p>
 </div>
                 
               </div>
@@ -530,8 +535,8 @@
 
   <div class="license-box my-3">
     <div class="license-title">
-      <div>有关运算器的若干理解（一）</div>
-      <div>http://hucz-62170.github.io/2026/04/24/CO003/</div>
+      <div>有关运算器的若干理解（二）</div>
+      <div>http://hucz-62170.github.io/2026/05/11/CO004/</div>
     </div>
     <div class="license-meta">
       
@@ -543,7 +548,7 @@
       
         <div class="license-meta-item license-meta-date">
           <div>发布于</div>
-          <div>2026年4月24日</div>
+          <div>2026年5月11日</div>
         </div>
       
       
@@ -575,18 +580,12 @@
                   <article class="post-prev col-6">
                     
                     
-                      <a href="/2026/05/11/CO004/" title="有关运算器的若干理解（二）">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">有关运算器的若干理解（二）</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
                   </article>
                   <article class="post-next col-6">
                     
                     
-                      <a href="/2026/04/08/CO002/" title="有关存储器的若干理解（二）">
-                        <span class="hidden-mobile">有关存储器的若干理解（二）</span>
+                      <a href="/2026/04/24/CO003/" title="有关运算器的若干理解（一）">
+                        <span class="hidden-mobile">有关运算器的若干理解（一）</span>
                         <span class="visible-mobile">下一篇</span>
                         <i class="iconfont icon-arrowright"></i>
                       </a>
