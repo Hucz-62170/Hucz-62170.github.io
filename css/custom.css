@@ -225,3 +225,29 @@ article p {
   padding-left: 10px !important; 
   display: block;
 }
+
+/* 1. 标签主体（还原官方的深灰黑） */
+figure.highlight.jsp code.hljs.jsp {
+  color: #333333 !important;
+}
+
+/* 2. HTML 标签（官方和 GitHub 更倾向于用蓝色或深蓝） */
+figure.highlight.jsp .hljs-tag,
+figure.highlight.jsp .hljs-name {
+  color: #005cc5 !important; /* 经典流派的标签蓝 */
+}
+
+/* 3. EL 表达式（标准的模板变量棕/橙色） */
+figure.highlight.jsp .hljs-template-variable {
+  color: #e36209 !important; 
+}
+
+/* 4. JSP 指令 <%@ ... %>（官方通常当作偏暗的预处理或注释色对待） */
+figure.highlight.jsp .hljs-meta {
+  color: #6a737d !important; /* 沉稳的暗灰，让主体 HTML 更好看 */
+}
+
+/* 5. 属性值与字符串（经典 GitHub 风格的深海蓝） */
+figure.highlight.jsp .hljs-string {
+  color: #032f62 !important; 
+}

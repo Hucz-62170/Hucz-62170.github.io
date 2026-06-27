@@ -406,6 +406,66 @@
     
     
       <div class="col-12 col-md-4 m-auto index-img">
+        <a href="/2026/06/16/Practice002/" target="_self">
+          <img src="/img/Practice002.jpeg" srcset="/img/loading.gif" lazyload alt="有关Spring MVC的若干理解（一）">
+        </a>
+      </div>
+    
+    <article class="col-12 col-md-8 mx-auto index-info">
+      <h2 class="index-header">
+        
+        <a href="/2026/06/16/Practice002/" target="_self">
+          有关Spring MVC的若干理解（一）
+        </a>
+      </h2>
+
+      
+      <a class="index-excerpt " href="/2026/06/16/Practice002/" target="_self">
+        <div>
+          关于Spring MVC的部分内容理解。
+        </div>
+      </a>
+
+      <div class="index-btm post-metas">
+        
+          <div class="post-meta mr-3">
+            <i class="iconfont icon-date"></i>
+            <time datetime="2026-06-16 14:36" pubdate>
+              2026-06-16
+            </time>
+          </div>
+        
+        
+          <div class="post-meta mr-3 d-flex align-items-center">
+            <i class="iconfont icon-category"></i>
+            
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/%E5%B7%A5%E7%A8%8B%E5%AE%9E%E8%B7%B5/" class="category-chain-item">工程实践</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+          </div>
+        
+        
+      </div>
+    </article>
+  </div>
+
+  <div class="row mx-auto index-card">
+    
+    
+      <div class="col-12 col-md-4 m-auto index-img">
         <a href="/2026/05/13/CO005/" target="_self">
           <img src="/img/CO005.png" srcset="/img/loading.gif" lazyload alt="有关控制器的若干理解（一）">
         </a>
@@ -934,9 +994,30 @@
     </div>
   
   
-  
+    
 </div>
 
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.querySelectorAll('figure.highlight.jsp code.hljs.jsp').forEach((block) => {
+    let html = block.innerHTML;
+
+    // 1. 精准匹配纯文本的 ${...}，大括号内只允许变量常规字符
+    // 因为 EJS 里不能直接写 % >，所以我们依然把这一步的正则用 new RegExp 隔离，安全第一
+    var elReg = new RegExp('(\\$\\{[a-zA-Z0-9\\.\\_\\-\\s]+\\})', 'g');
+    html = html.replace(elReg, '<span class="hljs-template-variable">$1</span>');
+
+    // 2. 强行匹配并包裹 HTML 标签
+    html = html.replace(/(&lt;\/?[a-zA-Z0-9]+(?:\s+[^&>]*)?&gt;)/g, '<span class="hljs-tag">$1</span>');
+    
+    // 3. 彻底打散 % 和 &gt;，防止 EJS 误认为模板结束
+    var jspReg = new RegExp('(&lt;%' + '@[\\s\\S]*?%' + '&gt;)', 'g');
+    html = html.replace(jspReg, '<span class="hljs-meta">$1</span>');
+
+    block.innerHTML = html;
+  });
+});
+</script>
   </footer>
 
   <!-- Scripts -->
