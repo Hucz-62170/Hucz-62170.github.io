@@ -251,3 +251,32 @@ figure.highlight.jsp .hljs-meta {
 figure.highlight.jsp .hljs-string {
   color: #032f62 !important; 
 }
+
+/* 让 JSTL 标签（如 c:forEach）显示出与普通 HTML 标签不同的颜色，比如深一点的紫罗兰色或蓝色 */
+figure.highlight.jsp .jstl-tag {
+  color: #563d7c !important; /* 你可以根据喜好换成别的颜色 */
+  font-weight: bold !important;
+}
+
+/* 1. JSTL 特殊标签外壳（<c: , </c: 以及末尾的 >）独占紫罗兰色 */
+figure.highlight.jsp .jstl-shell {
+  color: #a626a4 !important; /* 优雅的紫罗兰色 */
+  font-weight: bold !important;
+}
+
+/* 2. 所有的关键字（包括 choose, when 等以及普通 Java 关键字）一律亮起经典的红色 */
+figure.highlight.jsp .hljs-keyword {
+  color: #d73a49 !important; /* 关键字红 */
+  font-weight: bold !important;
+}
+
+/* 3. EL 表达式保持最高优先级的琥珀橙 */
+figure.highlight.jsp .hljs-template-variable {
+  color: #e65a00 !important;
+  font-weight: 600 !important;
+}
+
+/* 4. 其他属性里的双引号或者文本的兜底颜色 */
+figure.highlight.jsp .jstl-shell .hljs-string {
+  color: #032f62 !important; /* 字符串保持蓝色 */
+}

@@ -643,28 +643,6 @@
   
     
 </div>
-
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  document.querySelectorAll('figure.highlight.jsp code.hljs.jsp').forEach((block) => {
-    let html = block.innerHTML;
-
-    // 1. 精准匹配纯文本的 ${...}，大括号内只允许变量常规字符
-    // 因为 EJS 里不能直接写 % >，所以我们依然把这一步的正则用 new RegExp 隔离，安全第一
-    var elReg = new RegExp('(\\$\\{[a-zA-Z0-9\\.\\_\\-\\s]+\\})', 'g');
-    html = html.replace(elReg, '<span class="hljs-template-variable">$1</span>');
-
-    // 2. 强行匹配并包裹 HTML 标签
-    html = html.replace(/(&lt;\/?[a-zA-Z0-9]+(?:\s+[^&>]*)?&gt;)/g, '<span class="hljs-tag">$1</span>');
-    
-    // 3. 彻底打散 % 和 &gt;，防止 EJS 误认为模板结束
-    var jspReg = new RegExp('(&lt;%' + '@[\\s\\S]*?%' + '&gt;)', 'g');
-    html = html.replace(jspReg, '<span class="hljs-meta">$1</span>');
-
-    block.innerHTML = html;
-  });
-});
-</script>
   </footer>
 
   <!-- Scripts -->
@@ -927,6 +905,10 @@ document.addEventListener("DOMContentLoaded", function() {
   <script  src="/js/local-search.js" ></script>
 
 
+
+
+  
+<script src="/js/jsp-highlight.js"></script>
 
 
 
